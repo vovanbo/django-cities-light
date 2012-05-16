@@ -1,3 +1,6 @@
+WARNING: this is 2.x branch, which is unusable. Rely on master branch for
+stable version.
+
 django-cities-light -- *Simple django-cities alternative*
 =========================================================
 

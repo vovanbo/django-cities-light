@@ -24,6 +24,7 @@ setup(
     install_requires=[
         'django',
         'django_autoslug',
+        'django_appconf',
     ],
     classifiers = [
         'Development Status :: 3 - Alpha',

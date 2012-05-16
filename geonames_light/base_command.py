@@ -7,7 +7,7 @@ import zipfile
 import optparse
 
 from django.db import models
-from django.core.management.base import BaseCommand
+from django.core.management.base import DjangoBaseCommand
 from django.utils.encoding import force_unicode
 
 from ...exceptions import *
@@ -15,7 +15,9 @@ from ...signals import *
 from ...models import *
 from ...settings import *
 
-class Command(BaseCommand):
+__all__ = ['BaseCommand']
+
+class BaseCommand(DjangoBaseCommand):
     args = '''
 [--force-all] [--force-import-all \\]
                               [--force-import allCountries.txt cities15000.txt ...] \\
@@ -62,6 +64,11 @@ It is possible to force the import of files which weren't downloaded using the
             os.mkdir(DATA_DIR)
 
         for url in SOURCES:
+            if url in CITY_SOURCES and not ENABLE_CITY:
+                continue
+            if url in REGION_SOURCES and not ENABLE_REGION:
+                continue
+
             destination_file_name = url.split('/')[-1]
             destination_file_path = os.path.join(DATA_DIR, destination_file_name)
             
@@ -80,6 +87,8 @@ It is possible to force the import of files which weren't downloaded using the
 
                 if url in CITY_SOURCES:
                     self.city_import(destination_file_path)
+                elif url in REGION_SOURCES:
+                    self.region_import(destination_file_path)
                 elif url in COUNTRY_SOURCES:
                     self.country_import(destination_file_path)
   

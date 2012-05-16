@@ -1,8 +1,6 @@
 import autocomplete_light
 
-from models import *
-
-autocomplete_light.register(Country)
+from models import City
 
 class CityChannel(autocomplete_light.ChannelBase):
     def query_filter(self, results):
@@ -17,5 +15,4 @@ class CityChannel(autocomplete_light.ChannelBase):
             results = results.filter(country__pk=country_pk)
 
         return results
-
 autocomplete_light.register(City, CityChannel)

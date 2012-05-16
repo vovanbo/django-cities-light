@@ -1,0 +1,1 @@
+-e git+git://github.com/yourlabs/django-cities-light.git@country_region_city#egg=cities_light
