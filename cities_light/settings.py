@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Settings for this application. The most important is TRANSLATION_LANGUAGES
 because it's probably project specific.
@@ -45,33 +47,60 @@ INDEX_SEARCH_NAMES
     it is **not** MySQL), then this should be set to True. You might have to
     override this setting if using several databases for your project.
 """
+
 from __future__ import unicode_literals
-
 import os.path
-
 from django.conf import settings
 
-__all__ = ['COUNTRY_SOURCES', 'REGION_SOURCES', 'CITY_SOURCES',
-    'TRANSLATION_LANGUAGES', 'TRANSLATION_SOURCES', 'SOURCES', 'DATA_DIR',
-    'INDEX_SEARCH_NAMES', ]
+__all__ = ['COUNTRY_SOURCES',
+           'REGION_SOURCES',
+           'CITY_SOURCES',
+           'TRANSLATION_LANGUAGES',
+           'TRANSLATION_SOURCES',
+           'SOURCES',
+           'DATA_DIR',
+           'INDEX_SEARCH_NAMES',
+           ]
 
-COUNTRY_SOURCES = getattr(settings, 'CITIES_LIGHT_COUNTRY_SOURCES',
-    ['http://download.geonames.org/export/dump/countryInfo.txt'])
-REGION_SOURCES = getattr(settings, 'CITIES_LIGHT_REGION_SOURCES',
-    ['http://download.geonames.org/export/dump/admin1CodesASCII.txt'])
-CITY_SOURCES = getattr(settings, 'CITIES_LIGHT_CITY_SOURCES',
-    ['http://download.geonames.org/export/dump/cities15000.zip'])
-TRANSLATION_SOURCES = getattr(settings, 'CITIES_LIGHT_TRANSLATION_SOURCES',
-    ['http://download.geonames.org/export/dump/alternateNames.zip'])
-TRANSLATION_LANGUAGES = getattr(settings, 'CITIES_LIGHT_TRANSLATION_LANGUAGES',
-    ['es', 'en', 'pt', 'de', 'pl', 'abbr'])
+COUNTRY_SOURCES = getattr(
+    settings,
+    'CITIES_LIGHT_COUNTRY_SOURCES',
+    ['http://download.geonames.org/export/dump/countryInfo.txt']
+)
+
+REGION_SOURCES = getattr(
+    settings,
+    'CITIES_LIGHT_REGION_SOURCES',
+    ['http://download.geonames.org/export/dump/admin1CodesASCII.txt']
+)
+
+CITY_SOURCES = getattr(
+    settings,
+    'CITIES_LIGHT_CITY_SOURCES',
+    ['http://download.geonames.org/export/dump/cities15000.zip']
+)
+
+TRANSLATION_SOURCES = getattr(
+    settings,
+    'CITIES_LIGHT_TRANSLATION_SOURCES',
+    ['http://download.geonames.org/export/dump/alternateNames.zip']
+)
+
+TRANSLATION_LANGUAGES = getattr(
+    settings,
+    'CITIES_LIGHT_TRANSLATION_LANGUAGES',
+    ['es', 'en', 'pt', 'de', 'pl', 'abbr']
+)
 
 SOURCES = list(COUNTRY_SOURCES) + list(REGION_SOURCES) + list(CITY_SOURCES)
 SOURCES += TRANSLATION_SOURCES
 
-DATA_DIR = getattr(settings, 'CITIES_LIGHT_DATA_DIR',
-    os.path.normpath(os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), 'data')))
+DATA_DIR = getattr(
+    settings,
+    'CITIES_LIGHT_DATA_DIR',
+    os.path.normpath(
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data'))
+)
 
 # MySQL doesn't support indexing TextFields
 INDEX_SEARCH_NAMES = getattr(settings, 'CITIES_LIGHT_INDEX_SEARCH_NAMES', None)
