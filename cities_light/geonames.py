@@ -87,12 +87,10 @@ class Geonames(object):
                 # in python3 this is already an unicode
                 line = line.decode('utf8')
 
-            line = line.strip()
-
-            if len(line) < 1 or line[0] == '#':
+            if len(line.strip()) < 1 or line[0] == '#':
                 continue
 
-            yield [e.strip() for e in line.split('\t')]
+            yield [e.strip() for e in line.strip('\n').split('\t')]
 
     def num_lines(self):
         with open(self.file_path) as f:
