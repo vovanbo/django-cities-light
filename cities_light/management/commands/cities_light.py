@@ -495,8 +495,14 @@ It is possible to force the import of files which weren't downloaded using the
                         if name not in alternate_names:
                             alternate_names.append(name)
 
+                    # Improved rename of alternate named geo-objects
+                    # Using first language in TRANSLATION_LANGUAGES list
                     if lang == TRANSLATION_LANGUAGES[0]:
                         selected = None
+                        # Name selecting priority:
+                        # 1. Preferred, but not short.
+                        # 2. Preferred and short.
+                        # 3. Not preferred and not short.
                         for idx, name_data in enumerate(names_data):
                             if name_data['is_preferred'] and not name_data['is_short']:
                                 selected = idx
