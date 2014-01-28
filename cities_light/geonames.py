@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
 import six
@@ -12,7 +14,7 @@ try:
 except ImportError:
     from urllib import urlopen
 
-from .settings import *
+from .settings import DATA_DIR
 
 
 class Geonames(object):
@@ -24,8 +26,7 @@ class Geonames(object):
             os.mkdir(DATA_DIR)
 
         destination_file_name = url.split('/')[-1]
-        self.file_path = os.path.join(DATA_DIR,
-            destination_file_name)
+        self.file_path = os.path.join(DATA_DIR, destination_file_name)
 
         self.downloaded = self.download(url, self.file_path, force)
 
@@ -40,13 +41,12 @@ class Geonames(object):
         if url.split('.')[-1] == 'zip' and not exists:
             self.extract(self.file_path, destination_file_name)
 
-        self.file_path = os.path.join(
-            DATA_DIR, destination_file_name)
+        self.file_path = os.path.join(DATA_DIR, destination_file_name)
 
     def download(self, url, path, force=False):
         remote_file = urlopen(url)
         remote_time = time.strptime(remote_file.headers['last-modified'],
-            '%a, %d %b %Y %H:%M:%S %Z')
+                                    '%a, %d %b %Y %H:%M:%S %Z')
         remote_size = int(remote_file.headers['content-length'])
 
         if os.path.exists(path) and not force:
