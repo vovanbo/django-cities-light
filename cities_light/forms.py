@@ -1,19 +1,20 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
-
 from django import forms
+from django.db.models import get_model
 
-from .models import Country, Region, City
+Region = get_model('address', 'Region')
+City = get_model('address', 'City')
 
-__all__ = ['CountryForm', 'RegionForm', 'CityForm']
 
-
-class CountryForm(forms.ModelForm):
-    """
-    Country model form.
-    """
-    class Meta:
-        model = Country
-        fields = ('name', 'continent', 'alternate_names')
+# class CountryForm(forms.ModelForm):
+#     """
+#     Country model form.
+#     """
+#     class Meta:
+#         model = Country
+#         fields = ('name', 'continent', 'alternate_names')
 
 
 class RegionForm(forms.ModelForm):
