@@ -116,3 +116,23 @@ class AbstractCity(Base):
                                    self.country.printable_name)
         else:
             return '%s, %s' % (self.name, self.country.name)
+
+
+class AbstractPostalCode(models.Model):
+    """
+    Abstract class for postal codes
+    """
+    code = models.CharField(max_length=20, db_index=True)
+    country = models.ForeignKey('address.Country', blank=False, null=False)
+    region = models.ForeignKey('address.Region', blank=False, null=False)
+    city = models.ForeignKey('address.City', blank=True, null=True)
+    latitude = models.DecimalField(max_digits=8, decimal_places=5,
+                                   null=True, blank=True)
+    longitude = models.DecimalField(max_digits=8, decimal_places=5,
+                                    null=True, blank=True)
+
+    class Meta:
+        abstract = True
+        unique_together = (('code', 'country', 'region', 'city'),)
+        verbose_name = _('Postal Code')
+        verbose_name_plural = _('Postal Codes')

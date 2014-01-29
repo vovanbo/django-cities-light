@@ -86,6 +86,12 @@ TRANSLATION_SOURCES = getattr(
     ['http://download.geonames.org/export/dump/alternateNames.zip']
 )
 
+POSTAL_CODES_SOURCES = getattr(
+    settings,
+    'CITIES_LIGHT_POSTAL_CODES_SOURCES',
+    ['http://download.geonames.org/export/zip/allCountries.zip']
+    )
+
 TRANSLATION_LANGUAGES = getattr(
     settings,
     'CITIES_LIGHT_TRANSLATION_LANGUAGES',
@@ -94,6 +100,7 @@ TRANSLATION_LANGUAGES = getattr(
 
 SOURCES = list(COUNTRY_SOURCES) + list(REGION_SOURCES) + list(CITY_SOURCES)
 SOURCES += TRANSLATION_SOURCES
+SOURCES += POSTAL_CODES_SOURCES
 
 DATA_DIR = getattr(
     settings,

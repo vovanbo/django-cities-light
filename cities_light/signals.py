@@ -49,6 +49,7 @@ __all__ = ['city_items_pre_import', 'region_items_pre_import',
 
 city_items_pre_import = django.dispatch.Signal(providing_args=['items'])
 region_items_pre_import = django.dispatch.Signal(providing_args=['items'])
+postal_code_items_pre_import = django.dispatch.Signal(providing_args=['items'])
 
 
 def filter_non_cities(sender, items, **kwargs):

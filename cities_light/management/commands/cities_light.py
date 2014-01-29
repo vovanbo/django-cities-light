@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import os
+import re
 import datetime
 import time
 import os.path
@@ -9,6 +10,9 @@ import logging
 import optparse
 import sys
 import progressbar
+import six
+
+from decimal import Decimal as D
 
 from django.db import transaction, reset_queries, IntegrityError
 from django.db.models import get_model
@@ -16,12 +20,16 @@ from django.core.management.base import BaseCommand
 from django.utils.encoding import force_text
 
 from ...exceptions import InvalidItems
-from ...signals import region_items_pre_import, city_items_pre_import
+from ...signals import (
+    region_items_pre_import, city_items_pre_import,
+    postal_code_items_pre_import
+    )
 from ...geonames import Geonames
 from ...utils import convert_bytes
 from ...settings import (
     TRANSLATION_LANGUAGES, SOURCES, DATA_DIR,
-    TRANSLATION_SOURCES, CITY_SOURCES, REGION_SOURCES
+    TRANSLATION_SOURCES, CITY_SOURCES, REGION_SOURCES,
+    POSTAL_CODES_SOURCES
     )
 
 if sys.platform != 'win32':
@@ -35,6 +43,7 @@ except ImportError:
 Country = get_model('address', 'Country')
 Region = get_model('address', 'Region')
 City = get_model('address', 'City')
+PostalCode = get_model('address', 'PostalCode')
 
 
 class MemoryUsageWidget(progressbar.Widget):
@@ -179,6 +188,8 @@ It is possible to force the import of files which weren't downloaded using the
                     #     self.country_import(items)
                     elif url in TRANSLATION_SOURCES:
                         self.translation_parse(items)
+                    elif url in POSTAL_CODES_SOURCES:
+                        self.postal_code_parse(items)
 
                     reset_queries()
 
@@ -452,6 +463,70 @@ It is possible to force the import of files which weren't downloaded using the
             'is_short': bool(is_short_name)
         }
         self.translation_data[model_class][geoname_id][iso_language].append(name_data)
+
+    def postal_code_parse(self, items):
+        try:
+            postal_code_items_pre_import.send(sender=self, items=items)
+        except InvalidItems:
+            return
+
+        (country_code,      # iso country code, 2 characters
+         postal_code,       # varchar(20)
+         place_name,        # varchar(180)
+         admin_name1,       # 1. order subdivision (state) varchar(100)
+         admin_code1,       # 1. order subdivision (state) varchar(20)
+         admin_name2,       # 2. order subdivision (county/province) varchar(100)
+         admin_code2,       # 2. order subdivision (county/province) varchar(20)
+         admin_name3,       # 3. order subdivision (community) varchar(100)
+         admin_code3,       # 3. order subdivision (community) varchar(20)
+         latitude,          # estimated latitude (wgs84)
+         longitude,         # estimated longitude (wgs84)
+         accuracy           # accuracy of lat/lng from 1=estimated to 6=centroid
+         ) = (items[i] for i in range(12))
+
+        if country_code:
+            try:
+                country = Country.objects.get(iso_3166_1_a2=country_code)
+            except Country.DoesNotExist:
+                return
+
+            if admin_name1:
+                try:
+                    region = Region.objects.get(name=admin_name1.title(), country=country.pk)
+                except Region.DoesNotExist:
+                    return
+
+                if place_name and region and country:
+                    try:
+                        clean_place_name = re.sub('(\s[0-9]+)$', '', force_text(place_name))
+                        city = City.objects.filter(
+                            name=clean_place_name.title(),
+                            region=region.id,
+                            country=country.pk
+                            ).order_by('name_ascii').all()[0]
+                    except:
+                        city = None
+                else:
+                    city = None
+
+                values = {
+                    'code': force_text(postal_code),
+                    'country': country,
+                    'region': region,
+                    'city': city,
+                    'latitude': None if not bool(latitude) else D(latitude),
+                    'longitude': None if not bool(longitude) else D(longitude)
+                }
+                try:
+                    obj = PostalCode.objects.get(**values)
+                except PostalCode.DoesNotExist:
+                    obj = PostalCode(**values)
+                else:
+                    for key, value in six.iteritems(values):
+                        setattr(obj, key, value)
+
+                self.save(obj)
+
 
     def translation_import(self):
         data = getattr(self, 'translation_data', None)
