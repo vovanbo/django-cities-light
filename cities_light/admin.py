@@ -7,13 +7,14 @@ from copy import copy
 from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
 
-from .forms import RegionForm
+from .forms import RegionForm, PostalCodeForm
 from .utils import to_search
 
 from django.db.models import get_model
 
 Region = get_model('address', 'Region')
 City = get_model('address', 'City')
+PostalCode = get_model('address', 'PostalCode')
 
 
 # class CountryAdmin(admin.ModelAdmin):
@@ -94,3 +95,28 @@ class CityAdmin(admin.ModelAdmin):
         return CityChangeList
 
 admin.site.register(City, CityAdmin)
+
+
+class PostalCodeAdmin(admin.ModelAdmin):
+    """
+    Admin model for Postal code
+    """
+
+    list_filter = (
+        'country',
+    )
+    search_fields = (
+        'code',
+        'region__name',
+        'city__name',
+    )
+    list_display = (
+        'code',
+        'country',
+        'region',
+        'city'
+    )
+    ordering = ('code',)
+    form = PostalCodeForm
+
+admin.site.register(PostalCode, PostalCodeAdmin)

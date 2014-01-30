@@ -6,6 +6,7 @@ from django.db.models import get_model
 
 Region = get_model('address', 'Region')
 City = get_model('address', 'City')
+PostalCode = get_model('address', 'PostalCode')
 
 
 # class CountryForm(forms.ModelForm):
@@ -33,3 +34,12 @@ class CityForm(forms.ModelForm):
     class Meta:
         model = City
         fields = ('name', 'region', 'country', 'alternate_names')
+
+
+class PostalCodeForm(forms.ModelForm):
+    """
+    PostalCode model form
+    """
+    class Meta:
+        model = PostalCode
+        fields = ('code', 'country', 'region', 'city')
