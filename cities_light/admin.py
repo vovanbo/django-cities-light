@@ -7,15 +7,18 @@ from copy import copy
 from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
 
-from .forms import RegionForm, PostalCodeForm
+from django.db.models import get_model
+from oscar.core.loading import get_class
+
 from .utils import to_search
 
-from django.db.models import get_model
 
 Region = get_model('address', 'Region')
 City = get_model('address', 'City')
 PostalCode = get_model('address', 'PostalCode')
 
+RegionForm = get_class('address.forms', 'RegionForm')
+PostalCodeForm = get_class('address.forms', 'PostalCodeForm')
 
 # class CountryAdmin(admin.ModelAdmin):
 #     """
