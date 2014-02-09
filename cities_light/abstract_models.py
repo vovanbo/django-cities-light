@@ -77,8 +77,8 @@ class AbstractRegion(Base):
     class Meta(Base.Meta):
         abstract = True
         unique_together = (('country', 'name'), )
-        verbose_name = _('region/state')
-        verbose_name_plural = _('regions/states')
+        verbose_name = _('Region/State')
+        verbose_name_plural = _('Regions/States')
 
     def get_display_name(self):
         return '%s, %s' % (self.name, self.country.printable_name)
@@ -108,7 +108,8 @@ class AbstractCity(Base):
     class Meta(Base.Meta):
         abstract = True
         unique_together = (('region', 'name_ascii'),)
-        verbose_name_plural = _('cities')
+        verbose_name = _('City')
+        verbose_name_plural = _('Cities')
 
     def get_display_name(self):
         if self.region_id:
@@ -134,5 +135,5 @@ class AbstractPostalCode(models.Model):
     class Meta:
         abstract = True
         unique_together = (('code', 'country', 'region', 'city'),)
-        verbose_name = _('Postal Code')
-        verbose_name_plural = _('Postal Codes')
+        verbose_name = _('Postal code')
+        verbose_name_plural = _('Postal codes')
